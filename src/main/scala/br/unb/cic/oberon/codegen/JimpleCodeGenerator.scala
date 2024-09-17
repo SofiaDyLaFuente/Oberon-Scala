@@ -217,6 +217,17 @@ object JimpleCodeGenerator extends CodeGenerator[ClassDeclaration] {
         methodSignatures,
         indexOffset
       )
+    case ForStmt(init, condition, stmt) =>
+      jimpleForStatement(
+        init,
+        condition,
+        stmt,
+        module,
+        fields,
+        methodSignatures,
+        indexOffset
+      )
+
 
     case _ => throw new Exception("Non-exhaustive match in case statement.")
   }
@@ -350,6 +361,51 @@ object JimpleCodeGenerator extends CodeGenerator[ClassDeclaration] {
 
     buffer.result()
   }
+
+  def jimpleForStatement(
+    init: Statement,              // Alteração 1: Adicionamos a inicialização do loop aqui
+    condition: Expression,
+    increment: Statement,         // Alteração 2: Adicionamos o incremento do loop como parâmetro
+    stmt: Statement,
+    module: OberonModule,
+    fields: List[Field],
+    methodSignatures: List[MethodSignature],
+    indexOffset: Int
+  ): List[JimpleStatement] = {
+
+    var index = indexOffset
+    val forLabel = s"label${index}"
+    val endForLabel = s"label${index + 1}"
+    val buffer = ListBuffer[JimpleStatement]()
+
+    // Alteração 3: Inicialização do loop antes de entrar no loop propriamente dito
+    buffer ++= jimpleStatement(init, module, fields, methodSignatures, index)
+
+    index += 2
+
+    buffer += LabelStmt(forLabel)
+    // Condição do loop (se a condição não for satisfeita, vai para o fim do loop)
+    buffer += IfStmt(
+      jimpleExpression(condition, module, fields, methodSignatures),
+      endForLabel
+    )
+    // Corpo do loop
+    buffer ++= jimpleStatement(stmt, module, fields, methodSignatures, index)
+    index += calculateIndexOffset(stmt)
+
+    // Alteração 4: Adição do incremento do loop após o corpo
+    buffer ++= jimpleStatement(increment, module, fields, methodSignatures, index)
+    index += calculateIndexOffset(increment)
+
+    // Volta para o início do loop
+    buffer += GotoStmt(forLabel)
+
+    // Fim do loop
+    buffer += LabelStmt(endForLabel)
+
+    buffer.result()
+  }
+
 
   def jimpleExpression(
       oberonExpression: Expression,

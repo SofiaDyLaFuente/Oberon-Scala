@@ -386,7 +386,7 @@ class JimpleCodeGenTest extends AnyFunSuite with Oberon2ScalaParser {
               FLoopStmt(AssignStmt(
                 StaticField(FieldSignature(module.name, TInteger, "x")),
                 ImmediateExpression(ImmediateValue(IntValue(5)))
-              ), CmpGtExpression(Local("x"), ImmediateValue(IntValue(1))), "label0"),
+              ), CmpGtExpression(Local("x"), ImmediateValue(IntValue(1))), "label0", Local("x"),
                 GotoStmt("label1"),
                 LabelStmt("label0"),
                 AssignStmt(
@@ -404,6 +404,85 @@ class JimpleCodeGenTest extends AnyFunSuite with Oberon2ScalaParser {
                   )
                 ),
                 LabelStmt("label1")
+            ),
+            catchClauses = List.empty[CatchClause]
+          )
+        )
+      )
+    )
+    )
+    val jimpleClass = JimpleCodeGenerator.generateCode(module)
+
+    assert(jimpleClass == targetClass)
+  }
+  test("generate class declaration from whileStmt01.oberon") {
+    val path = Paths.get(
+      getClass.getClassLoader.getResource("stmts/whileStmt01.oberon").toURI
+    )
+
+    assert(path != null)
+
+    val content = String.join("\n", Files.readAllLines(path))
+    val module = parseAbs(parse(oberonParser,content))
+
+    assert(module.name == "SimpleModule")
+
+    val targetClass = ClassDeclaration(
+      modifiers = List(PublicModifer),
+      classType = TObject(module.name),
+      superClass = TObject("java.lang.Object"),
+      interfaces = List.empty[JimpleType],
+      fields = List(
+        Field(
+          modifiers = List(PublicModifer, StaticModifier),
+
+
+          fieldType = TInteger,
+          name = "x"
+        ),
+        Field(
+          modifiers = List(PublicModifer, StaticModifier),
+          fieldType = TInteger,
+          name = "y"
+        )
+      ),
+      methods = List(
+        Method(
+          modifiers = List(PublicModifer, StaticModifier),
+          returnType = TVoid,
+          name = "main",
+          formals = List(TArray(TString)),
+          exceptions = List.empty[JimpleType],
+          body = DefaultMethodBody(
+            localVariableDecls =
+              List(LocalVariableDeclaration(TArray(TString), "args")),
+            stmts = List(
+              AssignStmt(
+                StaticField(FieldSignature(module.name, TInteger, "y")),
+                ImmediateExpression(ImmediateValue(IntValue(1)))
+              ),
+              AssignStmt(
+                StaticField(FieldSignature(module.name, TInteger, "x")),
+                ImmediateExpression(ImmediateValue(IntValue(5)))
+              ),
+              WLoopStmt(CmpGtExpression(Local("x"), ImmediateValue(IntValue(1))), "label0"),
+              GotoStmt("label1"),
+              LabelStmt("label0"),
+              AssignStmt(
+                StaticField(FieldSignature(module.name, TInteger, "y")),
+                MultExpression(
+                  Local("x"),
+                  Local("y")
+                )
+              ),
+              AssignStmt(
+                StaticField(FieldSignature(module.name, TInteger, "x")),
+                MinusExpression(
+                  Local("x"),
+                  ImmediateValue(IntValue(1))
+                )
+              ),
+              LabelStmt("label1")
             ),
             catchClauses = List.empty[CatchClause]
           )
