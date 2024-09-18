@@ -386,7 +386,7 @@ class JimpleCodeGenTest extends AnyFunSuite with Oberon2ScalaParser {
               FLoopStmt(AssignStmt(
                 StaticField(FieldSignature(module.name, TInteger, "x")),
                 ImmediateExpression(ImmediateValue(IntValue(5)))
-              ), CmpGtExpression(Local("x"), ImmediateValue(IntValue(1))), "label0", Local("x"),
+              ), CmpGtExpression(Local("x"), ImmediateValue(IntValue(1))), "label0"),
                 GotoStmt("label1"),
                 LabelStmt("label0"),
                 AssignStmt(
@@ -409,7 +409,6 @@ class JimpleCodeGenTest extends AnyFunSuite with Oberon2ScalaParser {
           )
         )
       )
-    )
     )
     val jimpleClass = JimpleCodeGenerator.generateCode(module)
 

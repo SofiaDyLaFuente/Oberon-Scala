@@ -6,7 +6,7 @@ VAR
 BEGIN
     y := 1;
     x := 5;
-    WHILE x > 1 DO
+    WHILE (x > 1) DO
       y := y * x;
       x := x - 1
     END;
