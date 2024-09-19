@@ -383,27 +383,26 @@ class JimpleCodeGenTest extends AnyFunSuite with Oberon2ScalaParser {
                 StaticField(FieldSignature(module.name, TInteger, "y")),
                 ImmediateExpression(ImmediateValue(IntValue(1)))
               ),
-              FLoopStmt(AssignStmt(
+              AssignStmt(
                 StaticField(FieldSignature(module.name, TInteger, "x")),
                 ImmediateExpression(ImmediateValue(IntValue(5)))
-              ), CmpGtExpression(Local("x"), ImmediateValue(IntValue(1))), "label0"),
-                GotoStmt("label1"),
-                LabelStmt("label0"),
-                AssignStmt(
-                  StaticField(FieldSignature(module.name, TInteger, "y")),
-                  MultExpression(
-                    Local("x"),
-                    Local("y")
-                  )
-                ),
-                AssignStmt(
-                  StaticField(FieldSignature(module.name, TInteger, "x")),
-                  MinusExpression(
-                    Local("x"),
-                    ImmediateValue(IntValue(1))
-                  )
-                ),
-                LabelStmt("label1")
+              ),
+              LabelStmt("label0"),
+              IfStmt(CmpGtExpression(Local("x"), ImmediateValue(IntValue(1))), "label1"),
+              AssignStmt(
+                StaticField(FieldSignature(module.name, TInteger, "y")),
+                MultExpression(Local("y"), Local("x"))
+              ),
+              AssignStmt(
+                StaticField(FieldSignature(module.name, TInteger, "x")),
+                MinusExpression(Local("x"), ImmediateValue(IntValue(1)))
+              ),
+              GotoStmt("label0"),
+              LabelStmt("label1"),
+              AssignStmt(
+                StaticField(FieldSignature(module.name, TInteger, "x")),
+                MinusExpression(Local("x"), ImmediateValue(IntValue(0)))
+              )
             ),
             catchClauses = List.empty[CatchClause]
           )
@@ -464,7 +463,6 @@ class JimpleCodeGenTest extends AnyFunSuite with Oberon2ScalaParser {
                 StaticField(FieldSignature(module.name, TInteger, "x")),
                 ImmediateExpression(ImmediateValue(IntValue(5)))
               ),
-              WLoopStmt(CmpGtExpression(Local("x"), ImmediateValue(IntValue(1))), "label0"),
               GotoStmt("label1"),
               LabelStmt("label0"),
               AssignStmt(

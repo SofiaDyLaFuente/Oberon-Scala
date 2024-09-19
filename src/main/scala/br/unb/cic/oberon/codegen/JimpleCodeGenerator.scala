@@ -377,7 +377,7 @@ object JimpleCodeGenerator extends CodeGenerator[ClassDeclaration] {
     val buffer = ListBuffer[JimpleStatement]()
 
     index += 2
-
+    buffer ++= jimpleStatement(init, module, fields, methodSignatures, index)
     buffer += LabelStmt(forLabel)
     buffer += IfStmt(
       jimpleExpression(condition, module, fields, methodSignatures),

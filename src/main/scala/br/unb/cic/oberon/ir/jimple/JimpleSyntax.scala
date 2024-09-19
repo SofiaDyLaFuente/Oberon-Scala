@@ -131,10 +131,6 @@ case class AssignStmt(variable: JimpleVariable, expression: JimpleExpression)
 
 case class IfStmt(exp: JimpleExpression, target: String) extends JimpleStatement
 
-case class FLoopStmt(init:AssignStmt, exp: JimpleExpression, target: String) extends JimpleStatement
-
-case class WLoopStmt(exp: JimpleExpression, target: String) extends JimpleStatement
-
 case object ReturnEmptyStmt extends JimpleStatement
 
 case class ReturnStmt(immediate: JimpleImmediate) extends JimpleStatement
