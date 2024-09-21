@@ -351,6 +351,7 @@ object JimpleCodeGenerator extends CodeGenerator[ClassDeclaration] {
     methodSignatures: List[MethodSignature],
     indexOffset: Int
   ): List[JimpleStatement] = {
+
     var index = indexOffset
     val whileLabel = s"label${index}"
     val endWhileLabel = s"label${index + 1}"
