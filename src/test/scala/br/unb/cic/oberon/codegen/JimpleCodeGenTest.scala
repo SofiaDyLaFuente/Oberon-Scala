@@ -463,13 +463,13 @@ class JimpleCodeGenTest extends AnyFunSuite with Oberon2ScalaParser {
                 StaticField(FieldSignature(module.name, TInteger, "x")),
                 ImmediateExpression(ImmediateValue(IntValue(5)))
               ),
-              GotoStmt("label1"),
               LabelStmt("label0"),
+              IfStmt(CmpGtExpression(Local("x"), ImmediateValue(IntValue(1))), "label1"),
               AssignStmt(
                 StaticField(FieldSignature(module.name, TInteger, "y")),
                 MultExpression(
-                  Local("x"),
-                  Local("y")
+                  Local("y"),
+                  Local("x")
                 )
               ),
               AssignStmt(
@@ -479,6 +479,7 @@ class JimpleCodeGenTest extends AnyFunSuite with Oberon2ScalaParser {
                   ImmediateValue(IntValue(1))
                 )
               ),
+              GotoStmt("label0"),
               LabelStmt("label1")
             ),
             catchClauses = List.empty[CatchClause]

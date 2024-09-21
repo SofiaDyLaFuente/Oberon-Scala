@@ -179,6 +179,8 @@ object JimpleCodeGenerator extends CodeGenerator[ClassDeclaration] {
       methodSignatures: List[MethodSignature],
       indexOffset: Int
   ): List[JimpleStatement] = oberonStmt match {
+
+
     case AssignmentStmt(designator, exp) =>
       jimpleAssignment(designator, exp, module, fields, methodSignatures)
 
@@ -223,6 +225,13 @@ object JimpleCodeGenerator extends CodeGenerator[ClassDeclaration] {
         init,
         condition,
         stmt,
+        module,
+        fields,
+        methodSignatures,
+        indexOffset
+      ) case WriteStmt(exp) =>
+      jimplePrintStatement(
+        exp,
         module,
         fields,
         methodSignatures,
@@ -335,12 +344,12 @@ object JimpleCodeGenerator extends CodeGenerator[ClassDeclaration] {
   }
 
   def jimpleWhileStatement(
-      condition: Expression,
-      stmt: Statement,
-      module: OberonModule,
-      fields: List[Field],
-      methodSignatures: List[MethodSignature],
-      indexOffset: Int
+    condition: Expression,
+    stmt: Statement,
+    module: OberonModule,
+    fields: List[Field],
+    methodSignatures: List[MethodSignature],
+    indexOffset: Int
   ): List[JimpleStatement] = {
     var index = indexOffset
     val whileLabel = s"label${index}"
@@ -354,6 +363,7 @@ object JimpleCodeGenerator extends CodeGenerator[ClassDeclaration] {
       jimpleExpression(condition, module, fields, methodSignatures),
       endWhileLabel
     )
+
     buffer ++= jimpleStatement(stmt, module, fields, methodSignatures, index)
     index += calculateIndexOffset(stmt)
     buffer += GotoStmt(whileLabel)
@@ -391,6 +401,20 @@ object JimpleCodeGenerator extends CodeGenerator[ClassDeclaration] {
     buffer.result()
   }
 
+  def jimplePrintStatement(
+    exp: Expression,
+    module: OberonModule,
+    fields: List[Field],
+    methodSignatures: List[MethodSignature],
+    indexOffset: Int
+  ): List[JimpleStatement] = {
+    var index = indexOffset
+    val buffer = ListBuffer[JimpleStatement]()
+
+    index += 2
+
+    buffer.result()
+  }
 
   def jimpleExpression(
       oberonExpression: Expression,
